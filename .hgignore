@@ -1,0 +1,6 @@
+# use glob syntax.
+syntax: glob
+*.wav
+*.pyc
+*.fit.gz
+./FIT

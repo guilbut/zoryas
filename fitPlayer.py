@@ -1,0 +1,102 @@
+# -*- coding: utf-8 -*-
+"""
+Created on Thu Jun 13 16:19:59 2019
+
+@author: Baptiste
+"""
+import numpy
+import wave
+import os
+import subprocess
+import datetime
+import parse
+from platform import system
+from subprocess import TimeoutExpired 
+from fitParameters import sampleRate,fftsize,step,SoundVolume,TeslaVolume,fitsFolder
+from tools import getCleanedData,searchExt,joinPath,directory,fileName
+
+system = system()
+tempPath12000 = joinPath(directory(__file__),"temp_12000.wav")
+alreadyPlayedPaths = set()
+fitsFolder = joinPath(directory(__file__),fitsFolder) 
+waveLength = 15*60*sampleRate + fftsize
+noise = numpy.random.rand(waveLength) -0.5 #numpy.ones(waveLength) #
+win = 0.5 - 0.5 * numpy.cos(2 * numpy.pi * numpy.arange(fftsize) / (fftsize - 1))
+waveArray = numpy.zeros(waveLength)
+wave16bit = numpy.zeros((waveLength,2),dtype = numpy.int16)
+window_sum= numpy.zeros(fftsize)
+winSquare = win*win
+iminmax = int(fftsize/step)
+for i in range (-iminmax,iminmax+1):
+    start = i*step
+    end = start+fftsize
+    window_sum_start = max(start,0)
+    window_sum_end = min(end,fftsize)
+    window_square_start = window_sum_start-start
+    window_square_end = window_sum_end -start 
+    window_sum[window_sum_start:window_sum_end] += winSquare[window_square_start:window_square_end]
+winOut = win / window_sum
+playingWavePath = None
+dateDone = set()
+rootFitsFolder = joinPath(directory(__file__),"FIT") 
+playProcess = None
+j = -1 
+while True : 
+    paths = searchExt(fitsFolder,"gz",recursive = True)
+    for path in reversed(paths):
+        result = parse.parse("{year}-{month}-{day} {hour}h{minute} {rating} {location}.fit.gz", fileName(path)) 
+        date = datetime.datetime(year = int(result["year"]),month = int(result["month"]),day = int(result["day"]), hour = int(result["hour"]), minute = int(result["minute"]))
+        if date not in dateDone :
+            fitData = getCleanedData(path).T    
+            if fitData is not None and len(fitData)==  3600  :    
+                print(path)
+                waveArray[:] = 0.
+                for sliceNumber ,fitSlice in enumerate(fitData):
+                    for repeat in [0,1]:
+                        i = (sliceNumber*2)+repeat
+                        start = i * step
+                        stop = start + fftsize
+                        noiseRaw = noise[start:stop]
+                        noiseWindowed = noiseRaw * win
+                        noiseFFt = numpy.fft.rfft(noiseWindowed)
+                        fitAmplitudes = numpy.zeros(int(fftsize/2+1))
+                        fitAmplitudes[len(fitSlice)-1::-1] = fitSlice
+                        fitSpectrogram = noiseFFt[:len(fitAmplitudes)]* fitAmplitudes 
+                        wave_est = numpy.real(numpy.fft.irfft(fitSpectrogram))#[::-1]       
+                        waveArray[start:stop] += (winOut*wave_est)
+                waveArray /= numpy.abs(waveArray).max()
+                wave16bit[:,0] = waveArray * (SoundVolume*32767.0)
+                wave16bit[:,1] = waveArray * (TeslaVolume*32767.0)
+                j = (j+1)%2 
+                tempPath48000 = joinPath(directory(__file__),"temp_48000_%d.wav"%j)
+                if os.path.exists(tempPath12000):
+                    os.remove(tempPath12000)
+                if os.path.exists(tempPath48000):
+                    os.remove(tempPath48000)
+                Wave_write = wave.open(tempPath12000,"wb")
+                Wave_write.setnchannels(2)
+                Wave_write.setsampwidth(2)
+                Wave_write.setframerate(sampleRate)
+                Wave_write.setnframes(len(waveArray))                    
+                Wave_write.writeframesraw(wave16bit)
+                Wave_write.close()
+                subprocess.call(["ffmpeg","-i",tempPath12000,"-ar","48000",tempPath48000])
+                os.remove(tempPath12000)
+                if playProcess is not None : 
+                    print("wait")
+                    playProcess.wait()
+                    os.remove(playingWavePath)
+                if system == 'Windows':  
+                    exectable = 'cmdmp3'
+                else :
+                    exectable = 'mplayer'
+                args = [exectable, tempPath48000]
+                print(" ".join(args))
+                playProcess = subprocess.Popen(args)
+                playingWavePath = tempPath48000 
+                try : 
+                    playProcess.wait(timeout=10*60) # # attend 10 min, pour ce laisser 5 minutes de calcule pour prochain son 
+                except TimeoutExpired : 
+                    pass
+                dateDone.add(date)
+                break           
