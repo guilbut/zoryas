@@ -1,0 +1,91 @@
+This software was created for sound and plasma art installation "Zoryas" imagined by Claire Williams and brought to life with the code of  Baptiste de la Gorce in 2019-2020. This installation is a production of Le Fresnoy - Studio National des Arts Contemporains.
+This software has been made with the help of : 
+- The royal observatory of Beligum thanks to Petra Vanlommel & Christophe Marqué.
+- The E- Callisto network setup by Christian Monstein http://e-callisto.org/ giving us access to 24 h sun monitoring the electromagnetic activity of the sun with ... radiotelescopes around the world.
+
+And the precious advice of: 
+Jean Phillipe Uzan, cosmologue 
+Renée Prange & Philipe Zarka from l'OBSPM of Paris
+Sébastien Cabour, sound artist and technical advisor.
+
+This work is licensed under a Creative Commons Attribution-ShareAlike 4.0 International License.
+ ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+ 
+This software has been coded to sonify or translate live data into audible sound. Fits files mesured by radiotelescopes from the E- Callisto network are updated every 15 minutes on the E-Callisto server.This data is the suns electromagnetic activity mesured at different frequencys varying from 0 to 1600 mHz.
+The python software reads the data as a spectrogramme in time and frequency translating them into sound frequencys from 0 - 400 hz.
+
+
+This software has been made for an artistic purpose in order to see, hear and feel the otherwise inaudible activity of our star. The setup is on a RaspberryPi3 B+ and a mono track is transmitted to 5 transduceurs and basspumps. The spectator can experience the activity of the sun through a bone conduction setup. The other mono track is sent to a tesla coil which modulates 5 plasma glass sculptures. Each contain different noble gases that vary in intensity and effects according to the different frequencys. 
+Low frequencys have been privileged for this specific setup.
+
+The python software downloads the last hours of the E-Callisto data and selects the most intense activity to generate a stereo track in wav format.
+
+List of the radiotelescopes from the E Callisto network and their frequency in mHz:
+
+ALASKA COHOE (45-95 mHz)
+ALASKA HARP (40-0)
+ALSAKA (200-425)
+ALMATY (200-900)
+Austria-Krumbach (0-500)
+Austria-michelbach (150-400)
+Austria-OE3FLB  (700-600 mHz)
+Austria- Unigraz (80-40 mHz)
+Australia-ASSA (800-100 mHz)
+Australia-LMRO (900- 0)
+BIR_ ( 110-10)
+ESSEN (80-20)
+ETHIOPIA (900- 0)
+GLASGOW (80-60)
+GREENLAND (110-10)
+Germany-Hildesheim (900-50)
+HUMAIN (450-0)
+HURBANOVO (200-55)
+INDIA-UDAIPUR (900-50)
+INDONESIA (400-0)
+INPE (900-50)
+JAPAN-IBARAKI (850-100)
+KASI (500-0)
+KRIM (350-250)
+MEXART ( 220-50)
+MONGOLIA-GOBI (900-50)
+MONGOLIA-UB (900-50)
+MRO (850-50)  
+MRT1 (900-50)
+MRT2 (500-0)
+MRT3 (500-0)
+NEPAL (900-50)
+NORWAY-NY-AALESUND (1600-1000)
+NORWAY-RANDABERG (1600-1000)
+OOTY (500-0)
+PERALEJOS (900-50)
+PuertoRico-Arecibo (120-0)
+ROSWELL-NM (300-0)
+SOUTHAFRICA-SANSA (900-50)
+SSRT (500-0)
+SWISS-BLEN5M (900-300)
+SWISS-HB9SCT (900-50)
+SWISS-HEITERSWIL (80-0)
+SWISS-MUHEN (90-15)
+SWISS-ZURICH (1500-1400)
+TRIEST (425-225)
+URUGUAY (900-100)
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Requirements:
+Tested on raspian - debian.
+
+Python 3.5
+Pip
+aplay
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+# creation du repository ---------------------------
+hg clone https://login:motdepass@bitbucket.org/guilbut/smartrobot
+hg update default -C
+
+# mise à jour du repository ----------------------
+hg pull https://login:motdepass@bitbucket.org/guilbut/smartrobot
+hg update default -C
+
+$ sudo python3.5 fitDownloader.py
+$ sudo python3.5 fitPlayer.py
