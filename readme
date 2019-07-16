@@ -16,7 +16,7 @@ The python software reads the data as a spectrogramme in time and frequency tran
 
 
 This software has been made for an artistic purpose in order to see, hear and feel the otherwise inaudible activity of our star. The setup is on a RaspberryPi3 B+ and a mono track is transmitted to 5 transduceurs and basspumps. The spectator can experience the activity of the sun through a bone conduction setup. The other mono track is sent to a tesla coil which modulates 5 plasma glass sculptures. Each contain different noble gases that vary in intensity and effects according to the different frequencys. 
-Low frequencys have been privileged for this specific setup.
+Low frequencys have been privileged for this specific setup. More info: http://www.xxx-clairewilliams-xxx.com/projets/zoryas/
 
 The python software downloads the last hours of the E-Callisto data and selects the most intense activity to generate a stereo track in wav format.
 
