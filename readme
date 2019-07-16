@@ -78,13 +78,17 @@ Python 3.5
 Pip
 aplay
 
+$ sudo python3.5 -m pip install parse
+$ sudo python3.5 -m pip install astropy
+$ sudo python3.5 -m pip install scipy : plante
+
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 # creation du repository ---------------------------
-hg clone https://login:motdepass@bitbucket.org/guilbut/smartrobot
+hg clone https://login:motdepass@bitbucket.org/guilbut/clairewilliams
 hg update default -C
 
 # mise à jour du repository ----------------------
-hg pull https://login:motdepass@bitbucket.org/guilbut/smartrobot
+hg pull https://login:motdepass@bitbucket.org/guilbut/clairewilliams
 hg update default -C
 
 $ sudo python3.5 fitDownloader.py
