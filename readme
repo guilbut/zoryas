@@ -1,7 +1,7 @@
 This software was created for sound and plasma art installation "Zoryas" imagined by Claire Williams and brought to life with the code of  Baptiste de la Gorce in 2019. This installation is a production of Le Fresnoy - Studio National des Arts Contemporains.
 This software has been made with the help of : 
 - The royal observatory of Belgium thanks to Petra Vanlommel & Christophe Marqué.
-- The E- Callisto network setup by Christian Monstein http://e-callisto.org/ giving us access to 24 h sun monitoring the electromagnetic activity of the sun with ... radiotelescopes around the world.
+- The E- Callisto network setup by Christian Monstein http://e-callisto.org/ giving us access to 24 h sun monitoring the electromagnetic activity of the sun with 47 radiotelescopes around the world.
 
 And the precious advice of: 
 Jean Phillipe Uzan, cosmologue 
@@ -72,20 +72,28 @@ URUGUAY (900-100)
 
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 Requirements:
+Hifiberry DAC+ install sound card https://www.hifiberry.com/build/documentation/configuring-linux-3-18-x/
 Tested on raspian - debian.
 
 Python 3.5
 Pip
 aplay
+astropy
 
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+sudo python3.5 -m pip install parse
+sudo python3.5 -m pip install astropy
+sudo python3.5 -m pip install scipy : plante
+
 # creation du repository ---------------------------
-hg clone https://login:motdepass@bitbucket.org/guilbut/smartrobot
+hg clone https://login:motdepass@bitbucket.org/guilbut/clairewilliams
 hg update default -C
 
-# mise à jour du repository ----------------------
-hg pull https://login:motdepass@bitbucket.org/guilbut/smartrobot
+# Mise à jour du repository ----------------------
+hg pull https://login:motdepass@bitbucket.org/guilbut/clairewilliams
 hg update default -C
 
+# Executer dans le terminal en parrallèle
 $ sudo python3.5 fitDownloader.py
 $ sudo python3.5 fitPlayer.py
