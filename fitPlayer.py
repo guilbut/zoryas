@@ -14,6 +14,7 @@ from platform import system
 from subprocess import TimeoutExpired 
 from fitParameters import sampleRate,fftsize,step,SoundVolume,TeslaVolume,fitsFolder
 from tools import getCleanedData,searchExt,joinPath,directory,fileName
+import gc
 
 system = system()
 tempPath12000 = joinPath(directory(__file__),"temp_12000.wav")
@@ -99,4 +100,5 @@ while True :
                 except TimeoutExpired : 
                     pass
                 dateDone.add(date)
+                gc.collect()
                 break           
