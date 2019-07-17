@@ -99,7 +99,7 @@ while True :
                 args = [exectable, tempPath48000]
                 print(" ".join(args))                
                 playProcess = subprocess.Popen(args)
-                if os.path.exists(playingWavePath)
+                if os.path.exists(playingWavePath):
                     os.remove(playingWavePath)
                 playingWavePath = tempPath48000 
                 try : 
