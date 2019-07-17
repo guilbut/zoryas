@@ -14,6 +14,7 @@ from platform import system
 from subprocess import TimeoutExpired 
 from fitParameters import sampleRate,fftsize,step,SoundVolume,TeslaVolume,fitsFolder
 from tools import getCleanedData,searchExt,joinPath,directory,fileName
+import gc
 
 system = system()
 tempPath12000 = joinPath(directory(__file__),"temp_12000.wav")
@@ -58,11 +59,16 @@ while True :
                         stop = start + fftsize
                         noiseRaw = noise[start:stop]
                         noiseWindowed = noiseRaw * win
+                        del(noiseRaw)
                         noiseFFt = numpy.fft.rfft(noiseWindowed)
+                        del(noiseWindowed)
                         fitAmplitudes = numpy.zeros(int(fftsize/2+1))
                         fitAmplitudes[len(fitSlice)-1::-1] = fitSlice
-                        fitSpectrogram = noiseFFt[:len(fitAmplitudes)]* fitAmplitudes 
-                        wave_est = numpy.real(numpy.fft.irfft(fitSpectrogram))#[::-1]       
+                        fitSpectrogram = noiseFFt[:len(fitAmplitudes)]* fitAmplitudes
+                        del(noiseFFt)
+                        del(fitAmplitudes)
+                        wave_est = numpy.real(numpy.fft.irfft(fitSpectrogram))#[::-1] 
+                        del(fitSpectrogram)
                         waveArray[start:stop] += (winOut*wave_est)
                 waveArray /= numpy.abs(waveArray).max()
                 wave16bit[:,0] = waveArray * (SoundVolume*32767.0)
@@ -80,7 +86,8 @@ while True :
                 Wave_write.setnframes(len(waveArray))                    
                 Wave_write.writeframesraw(wave16bit)
                 Wave_write.close()
-                subprocess.call(["ffmpeg","-i",tempPath12000,"-ar","48000",tempPath48000])
+                gc.collect()
+                os.system('ffmpeg -i "%s" -ar 48000 "%s"'%(tempPath12000,tempPath48000))
                 os.remove(tempPath12000)
                 if playProcess is not None : 
                     print("wait")
@@ -92,6 +99,7 @@ while True :
                     exectable = 'mplayer'
                 args = [exectable, tempPath48000]
                 print(" ".join(args))
+                gc.collect()
                 playProcess = subprocess.Popen(args)
                 playingWavePath = tempPath48000 
                 try : 

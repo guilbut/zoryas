@@ -80,6 +80,10 @@ Pip
 aplay
 astropy
 
+$ sudo python3.5 -m pip install parse
+$ sudo python3.5 -m pip install astropy
+$ sudo python3.5 -m pip install scipy : plante
+
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 sudo python3.5 -m pip install parse
