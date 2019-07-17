@@ -98,8 +98,7 @@ while True :
                 else :
                     exectable = 'mplayer'
                 args = [exectable, tempPath48000]
-                print(" ".join(args))
-                gc.collect()
+                print(" ".join(args))                
                 playProcess = subprocess.Popen(args)
                 playingWavePath = tempPath48000 
                 try : 
