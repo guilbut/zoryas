@@ -92,7 +92,6 @@ while True :
                 if playProcess is not None : 
                     print("wait")
                     playProcess.wait()
-                    os.remove(playingWavePath)
                 if system == 'Windows':  
                     exectable = 'cmdmp3'
                 else :
@@ -100,6 +99,8 @@ while True :
                 args = [exectable, tempPath48000]
                 print(" ".join(args))                
                 playProcess = subprocess.Popen(args)
+                if os.path.exists(playingWavePath)
+                    os.remove(playingWavePath)
                 playingWavePath = tempPath48000 
                 try : 
                     playProcess.wait(timeout=10*60) # # attend 10 min, pour ce laisser 5 minutes de calcule pour prochain son 
