@@ -120,7 +120,26 @@ def htmlFromUrl(url):
 
 def getCleanedData(path):
     with fits.open(path) as hdul: 
-        data = hdul[0].data
+        try:
+            data = hdul[0].data 
+            # peut planter
+            """
+              File "/usr/local/lib/python3.5/dist-packages/astropy/utils/decorators.py", line 744, in __get__
+                val = self.fget(obj)
+              File "/usr/local/lib/python3.5/dist-packages/astropy/io/fits/hdu/image.py", line 230, in data
+                data = self._get_scaled_image_data(self._data_offset, self.shape)
+              File "/usr/local/lib/python3.5/dist-packages/astropy/io/fits/hdu/image.py", line 696, in _get_scaled_image_data
+                raw_data = self._get_raw_data(shape, code, offset)
+              File "/usr/local/lib/python3.5/dist-packages/astropy/io/fits/hdu/base.py", line 508, in _get_raw_data
+                return self._file.readarray(offset=offset, dtype=code, shape=shape)
+              File "/usr/local/lib/python3.5/dist-packages/astropy/io/fits/file.py", line 338, in readarray
+                data = _array_from_file(self._file, dtype, count)
+              File "/usr/local/lib/python3.5/dist-packages/astropy/io/fits/util.py", line 586, in _array_from_file
+                array = np.frombuffer(s, dtype=dtype, count=count)
+              ValueError: buffer is smaller than
+            """
+        except : 
+            return None 
         if len(data) > 20 : 
             data = data[20:-20]
         percent = 30  # x% est en dessous
