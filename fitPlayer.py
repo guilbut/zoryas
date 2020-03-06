@@ -38,7 +38,6 @@ for i in range (-iminmax,iminmax+1):
 winOut = win / window_sum
 playingWavePath = None
 dateDone = set()
-rootFitsFolder = joinPath(directory(__file__),"FIT") 
 playProcess = None
 j = -1 
 while True : 
@@ -73,7 +72,7 @@ while True :
                 wave16bit[:,0] = waveArray * (SoundVolume*32767.0)
                 wave16bit[:,1] = waveArray * (TeslaVolume*32767.0)
                 j = (j+1)%2 
-                tempPath48000 = joinPath(directory(__file__),"temp_48000_%d.wav"%j)
+                tempPath48000 = joinPath(wavsFolder,"temp_48000_%d.wav"%j)
                 if os.path.exists(tempPath12000):
                     os.remove(tempPath12000)
                 if os.path.exists(tempPath48000):
