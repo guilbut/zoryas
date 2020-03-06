@@ -12,14 +12,13 @@ import datetime
 import parse
 from platform import system
 from subprocess import TimeoutExpired 
-from fitParameters import sampleRate,fftsize,step,SoundVolume,TeslaVolume,fitsFolder
+from fitParameters import sampleRate,fftsize,step,SoundVolume,TeslaVolume,fitsFolder,wavsFolder
 from tools import getCleanedData,searchExt,joinPath,directory,fileName
 import gc
 
 system = system()
-tempPath12000 = joinPath(directory(__file__),"temp_12000.wav")
+tempPath12000 = joinPath(wavsFolder,"temp_12000.wav")
 alreadyPlayedPaths = set()
-fitsFolder = joinPath(directory(__file__),fitsFolder) 
 waveLength = 15*60*sampleRate + fftsize
 noise = numpy.random.rand(waveLength) -0.5 #numpy.ones(waveLength) #
 win = 0.5 - 0.5 * numpy.cos(2 * numpy.pi * numpy.arange(fftsize) / (fftsize - 1))
@@ -48,7 +47,7 @@ while True :
         result = parse.parse("{year}-{month}-{day} {hour}h{minute} {rating} {location}.fit.gz", fileName(path)) 
         date = datetime.datetime(year = int(result["year"]),month = int(result["month"]),day = int(result["day"]), hour = int(result["hour"]), minute = int(result["minute"]))
         if date not in dateDone :
-            fitData = getCleanedData(path).T    
+            fitData = getCleanedData(path)   
             if fitData is not None and len(fitData)==  3600  :    
                 print(path)
                 waveArray[:] = 0.

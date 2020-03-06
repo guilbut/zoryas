@@ -1,6 +1,7 @@
 SoundVolume = 0.15
 TeslaVolume = 1. 
-fitsFolder = "FIT"
+fitsFolder = "/mnt/mydisk/FIT"
+wavsFolder = "/mnt/mydisk"
 # -------------------
 import datetime
 sampleRate = 12000
