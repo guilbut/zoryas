@@ -105,3 +105,5 @@ while True :
                     pass
                 dateDone.add(date)
                 break           
+    else:
+        dateDone = set() # permet de relire tout si on est arrivé au bout des fichiers et que y'en a pas de nouveaux
