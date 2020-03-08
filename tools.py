@@ -114,7 +114,10 @@ def blockingUrlRead(url):
     printedWait = False
     while True: 
         try: 
-            return urlopen(url).read()
+            data = urlopen(url).read()
+            if printedWait : 
+                print("ok")
+            return data
         except :
             if not printedWait:
                 print("waiting internet connection for %s"%url)
