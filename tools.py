@@ -109,6 +109,18 @@ def blockingUrlopen(url):
                 print("waiting internet connection for %s"%url)
                 printedWait = True
             time.sleep(1)
+
+def blockingUrlRead(url):
+    printedWait = False
+    while True: 
+        try: 
+            return urlopen(url).read()
+        except :
+            if not printedWait:
+                print("waiting internet connection for %s"%url)
+                printedWait = True
+            time.sleep(1)
+
     
 def htmlFromUrl(url):
     resource = blockingUrlopen(url)

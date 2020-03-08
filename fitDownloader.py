@@ -8,7 +8,7 @@ import datetime
 import parse 
 import os 
 import time 
-from tools import blockingUrlopen ,htmlFromUrl,getCleanedData,getRating,joinPath, directory,searchExt,fileName
+from tools import blockingUrlRead ,htmlFromUrl,getCleanedData,getRating,joinPath, directory,searchExt,fileName
 from fitParameters import fitsFolder,keepDeltaTime
 
 
@@ -41,7 +41,7 @@ while True :
                     fileDate = datetime.datetime(year=date.year,month=date.month,day=date.day,hour=hour,minute= minute)
                     if fileDate > datetime.datetime.utcnow() - keepDeltaTime:
                         link  = dateFolderLink+fitName
-                        dataGz = blockingUrlopen(link).read()
+                        dataGz = blockingUrlRead(link)
                         if os.path.exists(tempFitPath):
                             os.remove(tempFitPath)
                         dataFile = open(tempFitPath,"wb")
