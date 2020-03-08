@@ -85,16 +85,15 @@ while True :
                 Wave_write.writeframesraw(wave16bit)
                 Wave_write.close()
                 gc.collect()
-                os.system('ffmpeg -i "%s" -ar 48000 "%s"'%(tempPath12000,tempPath48000))
+                os.system('ffmpeg -i "%s" -ar 48000 -loglevel error "%s"'%(tempPath12000,tempPath48000))
                 os.remove(tempPath12000)
                 if playProcess is not None : 
                     print("wait")
                     playProcess.wait()
                 if system == 'Windows':  
-                    exectable = 'cmdmp3'
+                    args = ['cmdmp3', tempPath48000]
                 else :
-                    exectable = 'mplayer'
-                args = [exectable, tempPath48000]
+                    args = ['mplayer','-ao','alsa', tempPath48000]
                 print(" ".join(args))                
                 playProcess = subprocess.Popen(args)
                 if (playingWavePath is not None) and os.path.exists(playingWavePath):
