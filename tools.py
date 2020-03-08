@@ -123,14 +123,25 @@ def blockingUrlRead(url):
                 print("waiting internet connection for %s"%url)
                 printedWait = True
             time.sleep(1)
-
     
 def htmlFromUrl(url):
-    resource = blockingUrlopen(url)
-    charset = resource.headers.get_content_charset()
+    printedWait = False
+    while True: 
+        try: 
+            resource = urlopen(url)
+            charset = resource.headers.get_content_charset()
+            data =  resource.read()
+            break
+        except :
+            if not printedWait:
+                print("waiting internet connection for %s"%url)
+                printedWait = True
+            time.sleep(1)
     if charset is None: 
         charset = "utf-8"
-    html =  resource.read().decode(charset)
+    html = data.decode(charset)
+    if printedWait : 
+        print("ok")
     return html
 
 def getCleanedData(path):
