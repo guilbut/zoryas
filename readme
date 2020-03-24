@@ -71,33 +71,166 @@ TRIEST (425-225)
 URUGUAY (900-100)
 
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-Requirements:
-Hifiberry DAC+ install sound card https://www.hifiberry.com/build/documentation/configuring-linux-3-18-x/
-Tested on raspian - debian.
 
-Python 3.5
-Pip
-aplay
-astropy
+Install Raspberry Pi ----------------------------------
 
-$ sudo python3.5 -m pip install parse
-$ sudo python3.5 -m pip install astropy
-$ sudo python3.5 -m pip install scipy : plante
+1) Download last Raspbian ISO
+https://www.raspberrypi.org/downloads/raspbian/
+Raspbian Buster with desktop  -> Download ZIP
+2) Download and install Balena Etcher : 
+https://www.balena.io/etcher/
+3) Graver avec Balena Etcher
+inserer la carte ISO dans un lecteur de carte SD sur l'ordinateur 
+lancer Balena Etcher 
+select image : selectionner le fichier zip téléchargé precedement
+select target : selectionner la carte SD
+Flash! 
+4) Demarer et configurer raspberry Pi 
+Welcome to the Raspberry Pi : Next 
+Set Contry : 
+Contry: France 
+Language : French 
+Timezone: Paris 
+Next 
+Change password : Next
+Set UP Screen : [v] This screen shows a black border around the desktop 
+Select WiFi Network : xxxxx
+Enter Wifi Password : xxxxx	
+Update Sofware : Next (aurais du mettre skipe ? ) 
+Restart 
 
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-sudo python3.5 -m pip install parse
-sudo python3.5 -m pip install astropy
-sudo python3.5 -m pip install scipy : plante
+Son  -----------------------------------------------------------
+si utilise Sortie jack : 	
+clic-droit sur l'icone haut-parleur pour choisir sortie Analog et pas HDMI ! 
 
-# creation du repository ---------------------------
-hg clone https://login:motdepass@bitbucket.org/guilbut/clairewilliams
-hg update default -C
+si utilise HifiBerry :
+source : https://www.hifiberry.com/docs/software/configuring-linux-3-18-x/
 
-# Mise à jour du repository ----------------------
-hg pull https://login:motdepass@bitbucket.org/guilbut/clairewilliams
-hg update default -C
+1) editer config.txt
+$ sudo mousepad /boot/config.txt
+commenter la ligne : 
+#dtparam=audio=on  
 
-# Executer dans le terminal en parrallèle
-$ sudo python3.5 fitDownloader.py
-$ sudo python3.5 fitPlayer.py
+en fonction de la carte son utilisée ajouté ligne: 
+
+#DAC for Raspberry Pi 1/DAC+ Light/DAC Zero/MiniAmp/Beocreate/DAC+ DSP
+dtoverlay=hifiberry-dac
+
+#DAC+ Standard/Pro/Amp2
+dtoverlay=hifiberry-dacplus
+
+#Digi/Digi+ all models
+dtoverlay=hifiberry-digi
+
+#Amp+ (not Amp2!)
+dtoverlay=hifiberry-amp
+
+2) redemarer et verifier que la carte son est bien détectée 
+un petite led verte s'allume sur la carte son Hifiberry
+$ sudo aplay -l
+**** Liste des Périphériques Matériels PLAYBACK ****
+carte 0: sndrpihifiberry [snd_rpi_hifiberry_dacplus], périphérique 0: HiFiBerry DAC+ HiFi pcm512x-hifi-0 [HiFiBerry DAC+ HiFi pcm512x-hifi-0]
+  Sous-périphériques: 1/1
+  Sous-périphérique #0: subdevice #0
+
+3) créer le fichier  asound.conf (Sans ça ne marche pas !!!!) 
+ $ sudo  mousepad  /etc/asound.conf
+copier dedans : 
+pcm.!default {
+  type hw card 0
+}
+ctl.!default {
+  type hw card 0
+}
+4) tester lecteure d'un fichier audio 
+sudo mplayer /home/clairewilliams/temp_48000_0.wav 
+
+Montage automatique de la clef USB  -------------------------------------
+1. Get the UUID of the disk partition:
+sudo blkid
+2. Find the disk partition from the list and note the UUID. For example, 5C24-1453.
+3. Open the fstab file using a command line editor such as mousepad:
+sudo mousepad /etc/fstab
+4.Add the following line in the fstab file:
+UUID=XXXX-XXXX /mnt/mydisk FSTYPE defaults,auto,users,rw,nofail 0 0
+Replace   XXXX-XXXX with theu UUDI trouvé au dessus 
+Replace FSTYPE with the type of your file system, which you found in step 2 of 'Mounting a storage device' above.
+5.If the filesystem type is FAT or NTFS, add ,umask=000 immediately after nofail - this will allow all users full read/write access to every file on the storage device.
+Now that you have set an entry in fstab, you can start up your Raspberry Pi with or without the storage device attached. Before you unplug the device you must either shut down the Pi, or manually unmount it using the steps in 'Unmounting a storage device' below.
+
+Zorias ----------------------------------------------------------
+(dans un terminal) 
+$ sudo apt-get install -y  mplayer
+$ sudo apt-get install -y mercurial
+$ sudo python3.7 -m pip install astropy
+$ sudo python3.7 -m pip install parse
+$ cd /home/
+$ sudo hg clone https://wiii:fourmis35@bitbucket.org/guilbut/clairewilliams
+$ sudo python3.7 -m pip install numpy : existe déjà 
+$ sudo python3.7 -m pip install wavefile existe déjà 
+$ sudo apt-get install emacs ?  pas besoin
+
+
+Demarage manuel --------------------------------------------------------
+(dans un terminal) 
+$ cd /home/clairewilliams
+$ sudo hg pull https://wiii:fourmis35@bitbucket.org/guilbut/clairewilliams
+$ sudo hg update default -C
+$ sudo python3.7 /home/clairewilliams/fitDownloader.py & sudo python3.7 /home/clairewilliams/fitPlayer.py
+
+Demarage automatique --------------------------------------------
+(dans un terminal) 
+$ sudo mousepad /etc/systemd/system/fitDownloader.service  
+copier dedans et sauver : 
+[Unit]
+Description=Autostart fitDownloader
+After=network.target
+
+[Service]
+ExecStart=/usr/bin/sudo /usr/bin/python3 ./fitDownloader.py
+WorkingDirectory=/home/clairewilliams/
+StandardOutput=inherit
+StandardError=file:/home/clairewilliams/fitDownloader_error
+Restart=always
+User=pi
+
+[Install]
+WantedBy=multi-user.target
+
+$ sudo mousepad /etc/systemd/system/fitPlayer.service
+copier dedans et sauver : 
+[Unit]
+Description=Autostart fitPlayer
+After=fitDownloader.service
+
+[Service]
+ExecStart=/usr/bin/sudo /usr/bin/python3 ./fitPlayer.py
+WorkingDirectory=/home/clairewilliams/
+StandardOutput=inherit
+StandardError=file:/home/clairewilliams/fitPlayer_error
+Restart=always
+User=pi
+
+[Install]
+WantedBy=multi-user.target
+
+$ sudo systemctl enable fitDownloader
+$ sudo systemctl enable fitPlayer
+
+
+Debugage -------------------------------------------------------
+pour voir les sorties  : 
+$ sudo juournalctl -f -u fitPlayer.py
+$ sudo juournalctl -f -u fitDownloader.py
+
+pour voir les erreures : 
+ouvrir les fichiers : 
+/home/clairewilliams/fitPlayer_error
+/home/clairewilliams/fitDownloader_error
+
+arreter les scripts , puis les lancer à la main 
+$ sudo systemctl stop fitPlayer & sudo systemctl stop fitDownloader
+$ sudo python3.7 /home/clairewilliams/fitDownloader.py
+$ sudo python3.7 /home/clairewilliams/fitPlayer .py
+
